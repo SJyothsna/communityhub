@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Services API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .nav {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .method {
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85em;
+            color: white;
+        }
+        
+        .method.get { background: #28a745; }
+        .method.post { background: #007bff; }
+        .method.delete { background: #dc3545; }
+        
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        
+        .endpoint-desc {
+            color: #666;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .test-form {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+        
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .response.success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .response.error {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        
+        .info-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Community Services Controller</h1>
+            <p>Test endpoints for managing service-community mappings</p>
+        </div>
+        
+        <div class="nav">
+            <a href="/">← Back to Home</a>
+            <a href="/h2-console" target="_blank">🗄️ H2 Console</a>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <h3>📋 Controller Overview</h3>
+                <p><strong>Base Path:</strong> <code>/api</code></p>
+                <p style="margin-top: 10px;">This controller manages the many-to-many relationship between services and communities. It allows you to:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Tag services to communities</li>
+                    <li>Retrieve all services for a specific community</li>
+                    <li>Remove services from communities</li>
+                    <li>Find all communities where a service is available</li>
+                </ul>
+            </div>
+
+            <!-- Endpoint 1: Tag Service to Community -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-url">/api/community-services</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Tag a service to a community</strong><br>
+                    Creates a mapping between a service and a community. This allows the same service to appear in multiple communities.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Request Body (JSON):</label>
+                        <textarea id="tagServiceBody">{
+  "communityId": 1,
+  "serviceId": 1,
+  "isFeatured": true,
+  "displayOrder": 1
+}</textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="tagServiceToCommunity()">Execute Request</button>
+                    <div id="response1" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 2: Get Services for Community -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/communities/{communityId}/services</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Get all services for a community (MAIN API)</strong><br>
+                    Retrieves all services available in a specific community with optional filtering by category, subcategory, or keyword.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Community ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="getServicesCommunityId" placeholder="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Category ID (optional):</label>
+                        <input type="number" id="getCategoryId" placeholder="Leave empty for all">
+                    </div>
+                    <div class="form-group">
+                        <label>Subcategory ID (optional):</label>
+                        <input type="number" id="getSubcategoryId" placeholder="Leave empty for all">
+                    </div>
+                    <div class="form-group">
+                        <label>Keyword (optional):</label>
+                        <input type="text" id="getKeyword" placeholder="e.g., plumber">
+                    </div>
+                    <button class="btn btn-primary" onclick="getServicesForCommunity()">Execute Request</button>
+                    <div id="response2" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 3: Remove Service from Community -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="endpoint-url">/api/communities/{communityId}/services/{serviceId}</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Remove a service from a community</strong><br>
+                    Deletes the mapping between a service and a community. The service itself is not deleted, only the association.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Community ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="deleteCommunityId" placeholder="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Service ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="deleteServiceId" placeholder="1" value="1">
+                    </div>
+                    <button class="btn btn-danger" onclick="removeServiceFromCommunity()">Execute Request</button>
+                    <div id="response3" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 4: Get Communities for Service -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/services/{serviceId}/communities</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Get all communities where a service is available</strong><br>
+                    Retrieves all communities that have access to a specific service.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Service ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="getCommunitiesServiceId" placeholder="1" value="1">
+                    </div>
+                    <button class="btn btn-primary" onclick="getCommunitiesForService()">Execute Request</button>
+                    <div id="response4" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                <h3 style="color: #856404;">⚠️ Prerequisites</h3>
+                <p style="color: #856404;">Before testing these endpoints, ensure you have:</p>
+                <ol style="margin-left: 20px; margin-top: 10px; color: #856404;">
+                    <li>Created at least one community</li>
+                    <li>Created categories and subcategories</li>
+                    <li>Created at least one provider</li>
+                    <li>Created at least one service</li>
+                </ol>
+                <p style="margin-top: 10px; color: #856404;">
+                    You can create these using the H2 console or by implementing additional controllers.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080';
+
+        async function makeRequest(method, url, body = null, responseId) {
+            const responseDiv = document.getElementById(responseId);
+            responseDiv.style.display = 'block';
+            responseDiv.className = 'response';
+            responseDiv.textContent = 'Loading...';
+            
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(BASE_URL + url, options);
+                
+                let data;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+                
+                const statusClass = response.ok ? 'success' : 'error';
+                responseDiv.className = `response ${statusClass}`;
+                
+                responseDiv.textContent = `Status: ${response.status} ${response.statusText}\n\n` + 
+                                         (typeof data === 'object' ? JSON.stringify(data, null, 2) : data);
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        function tagServiceToCommunity() {
+            try {
+                const body = JSON.parse(document.getElementById('tagServiceBody').value);
+                makeRequest('POST', '/api/community-services', body, 'response1');
+            } catch (error) {
+                const responseDiv = document.getElementById('response1');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Invalid JSON: ${error.message}`;
+            }
+        }
+        
+        function getServicesForCommunity() {
+            const communityId = document.getElementById('getServicesCommunityId').value;
+            const categoryId = document.getElementById('getCategoryId').value;
+            const subcategoryId = document.getElementById('getSubcategoryId').value;
+            const keyword = document.getElementById('getKeyword').value;
+            
+            if (!communityId) {
+                alert('Community ID is required');
+                return;
+            }
+            
+            let url = `/api/communities/${communityId}/services`;
+            const params = [];
+            
+            if (categoryId) params.push(`categoryId=${categoryId}`);
+            if (subcategoryId) params.push(`subcategoryId=${subcategoryId}`);
+            if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+            
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+            
+            makeRequest('GET', url, null, 'response2');
+        }
+        
+        function removeServiceFromCommunity() {
+            const communityId = document.getElementById('deleteCommunityId').value;
+            const serviceId = document.getElementById('deleteServiceId').value;
+            
+            if (!communityId || !serviceId) {
+                alert('Both Community ID and Service ID are required');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to remove service ${serviceId} from community ${communityId}?`)) {
+                makeRequest('DELETE', `/api/communities/${communityId}/services/${serviceId}`, null, 'response3');
+            }
+        }
+        
+        function getCommunitiesForService() {
+            const serviceId = document.getElementById('getCommunitiesServiceId').value;
+            
+            if (!serviceId) {
+                alert('Service ID is required');
+                return;
+            }
+            
+            makeRequest('GET', `/api/services/${serviceId}/communities`, null, 'response4');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .nav {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .method {
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85em;
+            color: white;
+        }
+        
+        .method.get { background: #28a745; }
+        .method.post { background: #007bff; }
+        .method.put { background: #ffc107; color: #333; }
+        .method.delete { background: #dc3545; }
+        
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        
+        .endpoint-desc {
+            color: #666;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .test-form {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+        
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .response.success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .response.error {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        
+        .info-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📂 Categories Controller</h1>
+            <p>Test endpoints for managing service categories</p>
+        </div>
+        
+        <div class="nav">
+            <a href="/">← Back to Home</a>
+            <a href="/h2-console" target="_blank">🗄️ H2 Console</a>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <h3>📋 Controller Overview</h3>
+                <p><strong>Base Path:</strong> <code>/api/categories</code></p>
+                <p style="margin-top: 10px;">This controller manages top-level service categories like "Home Services", "Kids Classes", "Health & Wellness", etc.</p>
+            </div>
+
+            <!-- Endpoint 1: Get All Categories -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/categories</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Get all categories</strong><br>
+                    Retrieves a list of all service categories in the system.
+                </div>
+                <div class="test-form">
+                    <button class="btn btn-primary" onclick="getAllCategories()">Execute Request</button>
+                    <div id="response1" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 2: Get Category by ID -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-url">/api/categories/{id}</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Get category by ID</strong><br>
+                    Retrieves a specific category by its ID.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Category ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="getCategoryId" placeholder="1" value="1">
+                    </div>
+                    <button class="btn btn-primary" onclick="getCategoryById()">Execute Request</button>
+                    <div id="response2" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 3: Create Category -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-url">/api/categories</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Create a new category</strong><br>
+                    Creates a new service category with the provided information.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Request Body (JSON):</label>
+                        <textarea id="createCategoryBody">{
+  "categoryName": "Home Services",
+  "categoryType": "SERVICE",
+  "description": "Household support and maintenance services"
+}</textarea>
+                    </div>
+                    <p style="margin: 10px 0; color: #666; font-size: 0.9em;">
+                        <strong>Category Types:</strong> SERVICE, CLASS, HEALTH, EDUCATION, ENTERTAINMENT
+                    </p>
+                    <button class="btn btn-primary" onclick="createCategory()">Execute Request</button>
+                    <div id="response3" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 4: Update Category -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="endpoint-url">/api/categories/{id}</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Update an existing category</strong><br>
+                    Updates category information for the specified ID.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Category ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="updateCategoryId" placeholder="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Request Body (JSON):</label>
+                        <textarea id="updateCategoryBody">{
+  "categoryName": "Home Services (Updated)",
+  "categoryType": "SERVICE",
+  "description": "Updated description for home services"
+}</textarea>
+                    </div>
+                    <button class="btn btn-warning" onclick="updateCategory()">Execute Request</button>
+                    <div id="response4" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Endpoint 5: Delete Category -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="endpoint-url">/api/categories/{id}</span>
+                </div>
+                <div class="endpoint-desc">
+                    <strong>Delete a category</strong><br>
+                    Permanently deletes a category from the system.
+                </div>
+                <div class="test-form">
+                    <div class="form-group">
+                        <label>Category ID: <span style="color: red;">*</span></label>
+                        <input type="number" id="deleteCategoryId" placeholder="1" value="1">
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteCategory()">Execute Request</button>
+                    <div id="response5" class="response" style="display:none;"></div>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                <h3 style="color: #856404;">⚠️ Note</h3>
+                <p style="color: #856404;">
+                    This controller needs to be implemented in the backend. The endpoints shown here are the standard CRUD operations that should be created.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080';
+
+        async function makeRequest(method, url, body = null, responseId) {
+            const responseDiv = document.getElementById(responseId);
+            responseDiv.style.display = 'block';
+            responseDiv.className = 'response';
+            responseDiv.textContent = 'Loading...';
+            
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(BASE_URL + url, options);
+                
+                let data;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+                
+                const statusClass = response.ok ? 'success' : 'error';
+                responseDiv.className = `response ${statusClass}`;
+                
+                responseDiv.textContent = `Status: ${response.status} ${response.statusText}\n\n` + 
+                                         (typeof data === 'object' ? JSON.stringify(data, null, 2) : data);
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        function getAllCategories() {
+            makeRequest('GET', '/api/categories', null, 'response1');
+        }
+        
+        function getCategoryById() {
+            const id = document.getElementById('getCategoryId').value;
+            if (!id) {
+                alert('Category ID is required');
+                return;
+            }
+            makeRequest('GET', `/api/categories/${id}`, null, 'response2');
+        }
+        
+        function createCategory() {
+            try {
+                const body = JSON.parse(document.getElementById('createCategoryBody').value);
+                makeRequest('POST', '/api/categories', body, 'response3');
+            } catch (error) {
+                const responseDiv = document.getElementById('response3');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Invalid JSON: ${error.message}`;
+            }
+        }
+        
+        function updateCategory() {
+            const id = document.getElementById('updateCategoryId').value;
+            if (!id) {
+                alert('Category ID is required');
+                return;
+            }
+            try {
+                const body = JSON.parse(document.getElementById('updateCategoryBody').value);
+                makeRequest('PUT', `/api/categories/${id}`, body, 'response4');
+            } catch (error) {
+                const responseDiv = document.getElementById('response4');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Invalid JSON: ${error.message}`;
+            }
+        }
+        
+        function deleteCategory() {
+            const id = document.getElementById('deleteCategoryId').value;
+            if (!id) {
+                alert('Category ID is required');
+                return;
+            }
+            if (confirm(`Are you sure you want to delete category ${id}?`)) {
+                makeRequest('DELETE', `/api/categories/${id}`, null, 'response5');
+            }
+        }
+    </script>
+</body>
+</html>
