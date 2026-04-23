@@ -10,9 +10,12 @@ A Spring Boot backend application for managing community-centric service directo
 - ✅ Service listings
 - ✅ **Many-to-many mapping**: Same service visible in multiple communities
 - ✅ Service recommendations
-- ✅ H2 in-memory database
+- ✅ **H2 file-based database** (data persists across restarts)
 - ✅ RESTful APIs
 - ✅ Complete CRUD operations
+- ✅ **Admin Panel** - Unified web interface for managing all entities
+- ✅ **Individual Controller Pages** - Separate testing pages for each controller
+- ✅ **API Test Tools** - Built-in API connectivity testing
 
 ## Technology Stack
 

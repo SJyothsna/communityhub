@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #result {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <p>Click the button to test if the API is working:</p>
+    
+    <button onclick="testAPI()">Test Communities API</button>
+    <button onclick="testCategories()">Test Categories API</button>
+    <button onclick="testProviders()">Test Providers API</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing /api/communities endpoint...\n\n';
+            
+            try {
+                const response = await fetch(`${API_BASE}/communities`);
+                resultDiv.innerHTML += `Status: ${response.status} ${response.statusText}\n`;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `\n<span class="success">✓ Success!</span>\n`;
+                    resultDiv.innerHTML += `Found ${data.length} communities:\n\n`;
+                    resultDiv.innerHTML += JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.innerHTML += `\n<span class="error">✗ Error: ${response.status}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML += `\n<span class="error">✗ Error: ${error.message}</span>\n`;
+                resultDiv.innerHTML += `\nPossible causes:\n`;
+                resultDiv.innerHTML += `- Spring Boot application is not running\n`;
+                resultDiv.innerHTML += `- Wrong port (should be 8080)\n`;
+                resultDiv.innerHTML += `- CORS issue\n`;
+            }
+        }
+
+        async function testCategories() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing /api/categories endpoint...\n\n';
+            
+            try {
+                const response = await fetch(`${API_BASE}/categories`);
+                resultDiv.innerHTML += `Status: ${response.status} ${response.statusText}\n`;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `\n<span class="success">✓ Success!</span>\n`;
+                    resultDiv.innerHTML += `Found ${data.length} categories:\n\n`;
+                    resultDiv.innerHTML += JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.innerHTML += `\n<span class="error">✗ Error: ${response.status}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML += `\n<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testProviders() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing /api/providers endpoint...\n\n';
+            
+            try {
+                const response = await fetch(`${API_BASE}/providers`);
+                resultDiv.innerHTML += `Status: ${response.status} ${response.statusText}\n`;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `\n<span class="success">✓ Success!</span>\n`;
+                    resultDiv.innerHTML += `Found ${data.length} providers:\n\n`;
+                    resultDiv.innerHTML += JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.innerHTML += `\n<span class="error">✗ Error: ${response.status}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML += `\n<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
